@@ -21,9 +21,9 @@ class Card {
     constructor(rank,suit) {
         this.suit = suit;
         this.rank = rank;
+        this.faceUp = false;
     }
 }
-
 
 class Player {
     constructor(num) {
@@ -33,7 +33,6 @@ class Player {
     }
 }
 
-
 class Game {
     constructor() {
         this.deck = [];
@@ -41,7 +40,7 @@ class Game {
         this.players = []; //array of 2 players;
         this.makeDeck();
         this.dealCards();
-        this.playGame();
+        // this.playGame();
     }
 
     makeDeck() {
@@ -61,6 +60,39 @@ class Game {
             [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
         }
     
+        // this.drawDeck();
+    }
+
+    drawDeck() { //loop over all cards inside of this.deck
+
+        for (let x = 1; x <= 2; x++) {
+
+            const playerSection = document.getElementById(`player${x}`);
+
+            playerSection.innerHTML = "";
+            for (let cardObj of this.players[x-1].hand) {
+                let card = document.createElement('div');
+                let face = document.createElement('h2');
+    
+                if (cardObj.faceUp) {
+                    face.innerText = `${cardObj.rank} ${cardObj.suit}`;
+                    card.setAttribute('class','card');
+                } else {
+                    card.setAttribute('class', 'card faceDown')
+                }
+                card.addEventListener('click', () => {
+                    this.clickedCard(cardObj);
+                })
+        
+                card.append(face);
+                playerSection.append(card)
+            }
+        }
+    }
+
+    clickedCard(card) {
+        card.faceUp = !card.faceUp;
+        this.drawDeck();
     }
 
     dealCards() {
@@ -71,7 +103,6 @@ class Game {
             player.hand = this.deck.splice(0,26);
             this.players.push(player);
         }
-
         //deal this.deck [] to each player
     }
 
@@ -84,4 +115,8 @@ class Game {
 
 let war = new Game();
 
-console.log(war);
+let button = document.getElementById('start')
+
+button.addEventListener('click', () => {
+    war.drawDeck();
+})
